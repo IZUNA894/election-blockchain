@@ -130,22 +130,23 @@ class Blockchain {
 
     return nodes;
   };
+
   replaceChain = () => {
-    let network = this.nodes;
+    let network = this.getNodes();
     let longestChain = null;
     let maxLength = this.chain.length;
 
     network.forEach(async (item) => {
       let response = await fetch(item + "/chains");
       response = await response.json();
-      if (response.status == 200) {
-        let length = response.body.data.length;
-        let chain = response.body.data.chain;
-        if (length > maxLength && this.isChainValid(chain)) {
-          maxLength = length;
-          longestChain = chain;
-        }
+      // if (response.status == 200) {
+      let length = response.data.length;
+      let chain = response.data.chain;
+      if (length > maxLength && this.isChainValid(chain)) {
+        maxLength = length;
+        longestChain = chain;
       }
+      // }
     });
     if (longestChain) {
       this.chain = longestChain;
