@@ -122,7 +122,14 @@ class Blockchain {
       this.nodes.add(item);
     });
   };
+  getNodes = () => {
+    let nodes = [];
+    for (let item of this.nodes) {
+      nodes.push(item);
+    }
 
+    return nodes;
+  };
   replaceChain = () => {
     let network = this.nodes;
     let longestChain = null;

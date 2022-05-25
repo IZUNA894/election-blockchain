@@ -48,8 +48,8 @@ app.post("/nodes/peers", async (request, response) => {
   response.send({
     status: true,
     message: "Blockchain nodes fetched successfully",
-    data: Blockchain.nodes,
-    length: Blockchain.nodes.length,
+    data: Blockchain.getNodes(),
+    length: Blockchain.getNodes().length,
   });
 });
 
@@ -60,8 +60,8 @@ app.post("/nodes/all", (request, response) => {
   response.send({
     status: true,
     message: "Blockchain nodes fetched successfully",
-    data: Blockchain.nodes,
-    length: Blockchain.nodes.length,
+    data: Blockchain.getNodes(),
+    length: Blockchain.getNodes().length,
   });
 });
 
@@ -69,8 +69,8 @@ app.get("/nodes/all", (request, response) => {
   response.send({
     status: true,
     message: "Blockchain nodes fetched successfully",
-    data: Blockchain.nodes,
-    length: Blockchain.nodes.length,
+    data: Blockchain.getNodes(),
+    length: Blockchain.getNodes().length,
   });
 });
 
