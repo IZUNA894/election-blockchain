@@ -1,12 +1,13 @@
 const crypto = require("crypto");
 const fetch = require("node-fetch");
-
+const { SELF_NODE } = require("./config");
 class Blockchain {
   constructor() {
     this.chain = [];
     this.calculatedHash = "";
     this.transactions = null;
-    this.nodes = [];
+    this.nodes = new Set();
+    this.nodes.add(SELF_NODE);
     this.createBlock();
   }
 
@@ -116,8 +117,10 @@ class Blockchain {
     return voteResult;
   };
 
-  addNode = ({ address }) => {
-    this.nodes.push(address);
+  addNodes = (addressArr) => {
+    addressArr.forEach((item) => {
+      this.nodes.add(item);
+    });
   };
 
   replaceChain = () => {

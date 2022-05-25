@@ -5,7 +5,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const app = express();
 const Blockchain = require("./util");
-const { SEED_NODE } = require("./config");
+const { SEED_NODE, SELF_NODE } = require("./config");
 app.use(compression());
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(helmet.hidePoweredBy());
@@ -19,19 +19,44 @@ const nodeAddress = `http://localhost:${PORT}`;
 let candidates = [];
 
 //____________________NODES________________
-app.post("/nodes/connect", (request, response) => {
-  let { hostname } = request;
-  Blockchain.addNode({ address: `http://${hostname}:8080` });
+// app.post("/nodes/connect", (request, response) => {
+//   let { hostname } = request;
+//   Blockchain.addNode({ address: `http://${hostname}:8080` });
+
+//   response.send({
+//     status: true,
+//     message: `You are added to Blockchain network at ${Blockchain.nodes.length}`,
+//     data: Blockchain.nodes,
+//   });
+// });
+
+app.post("/nodes/peers", async (request, response) => {
+  let result = await fetch(`${SEED_NODE}/nodes/all`, {
+    method: "POST",
+    body: JSON.stringify({
+      address: SELF_NODE,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+  result = await result.json();
+  let allNodes = result.data;
+
+  let peerNodes = allNodes.filter((item) => item !== SELF_NODE);
+
+  Blockchain.addNodes(peerNodes);
 
   response.send({
     status: true,
-    message: `You are added to Blockchain network at ${Blockchain.nodes.length}`,
+    message: "Blockchain nodes fetched successfully",
     data: Blockchain.nodes,
+    length: Blockchain.nodes.length,
   });
 });
 
-app.get("/nodes/peers", async (request, response) => {
-  fetch(`${SEED_NODE}/nodes/all`);
+app.post("/nodes/all", (request, response) => {
+  let { address } = request.body;
+  Blockchain.addNodes([address]);
+
   response.send({
     status: true,
     message: "Blockchain nodes fetched successfully",
