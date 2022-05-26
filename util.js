@@ -24,6 +24,21 @@ class Blockchain {
     let proof = this.proofOfWork(block);
     block.proof = proof;
     block.calculatedHash = this.calculatedHash;
+
+    //broadcasting block to other nodes
+    let allNodes = this.getNodes();
+    let peerNodes = allNodes.filter((item) => item !== SELF_NODE);
+
+    peerNodes.forEach(async (item) => {
+      let result = await fetch(`${item}/blocks/peers`, {
+        method: "POST",
+        body: JSON.stringify({
+          block,
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+
     // let block = {...this.block};
     this.transactions = null;
     this.chain.push(block);
@@ -85,6 +100,31 @@ class Blockchain {
       previousBlock = block;
       blockIndex += 1;
     }
+    return true;
+  };
+
+  addBlockFromPeers = (block) => {
+    let previousBlock = this.chain.at(-1);
+    let blockIndex = 1;
+
+    delete previousBlock.calculatedHash;
+    // let previousHash = this.hash(previousBlock);
+
+    // if (block.previousHash !== previousHash) {
+    //   return false;
+    // }
+
+    // delete block.proof;
+    delete block.calculatedHash;
+    // let proof = block.proof;
+    let hashOperation = this.hash(block);
+    if (hashOperation.slice(0, 4) != "0000") {
+      return false;
+    }
+
+    //now we have chck block....
+    //add it to blockchain
+    this.chain.push(block);
     return true;
   };
 

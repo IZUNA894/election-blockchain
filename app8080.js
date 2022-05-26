@@ -15,7 +15,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const PORT = 8080;
-const nodeAddress = `http://localhost:${PORT}`;
 
 let candidates = [];
 
@@ -30,6 +29,18 @@ let candidates = [];
 //     data: Blockchain.nodes,
 //   });
 // });
+
+app.post("/nodes/peers", (request, response) => {
+  let { block } = request.body;
+
+  Blockchain.addBlockFromPeers(block);
+
+  response.send({
+    status: true,
+    message: `You are added to Blockchain network at ${Blockchain.nodes.length}`,
+    data: Blockchain.nodes,
+  });
+});
 
 app.post("/nodes/peers", async (request, response) => {
   let result = await fetch(`${SEED_NODE}/nodes/all`, {
@@ -106,7 +117,7 @@ app.post("/chains/replace", (request, response) => {
 //________________VOTE________________________
 
 app.post("/votes", (request, response) => {
-  let result = Blockchain.addVote({ ...request.body, node: nodeAddress });
+  let result = Blockchain.addVote({ ...request.body, node: SELF_NODE });
 
   response.send({
     status: true,
