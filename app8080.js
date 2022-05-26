@@ -30,7 +30,7 @@ let candidates = [];
 //   });
 // });
 
-app.post("/nodes/peers", (request, response) => {
+app.post("/blocks/peers", (request, response) => {
   let { block } = request.body;
 
   Blockchain.addBlockFromPeers(block);
