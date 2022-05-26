@@ -3,6 +3,7 @@ var compression = require("compression");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const cors = require("cors");
+const fetch = require("node-fetch");
 const app = express();
 const Blockchain = require("./util");
 const { SEED_NODE, SELF_NODE } = require("./config");
